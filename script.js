@@ -15,7 +15,7 @@ let squares = [];
 let isGameOver = false;
 let is_clicked = Array(100).fill(0);
 var moves = new Array(width);
-
+let winner="n";
 for (var i = 0; i < moves.length; i++) {
   moves[i] = new Array(width);
 }
@@ -37,7 +37,60 @@ function change_color() {
     })
 }
 function check_game_result(){
-    
+    for(i=0;i<width-3;i++){
+        for(j=0;j<width;j++){
+            if((moves[i][j]=="X"|| moves[i][j]=="O") && moves[i][j]==moves[i+1][j] && moves[i][j]==moves[i+2][j] && moves[i][j]==moves[i+3][j]){
+                winner=moves[i][j];
+            }
+        }
+    }
+
+    for(i=0;i<width;i++){
+        for(j=0;j<width-3;j++){
+            if((moves[i][j]=="X"|| moves[i][j]=="O") && moves[i][j]==moves[i][j+1] && moves[i][j]==moves[i][j+2] && moves[i][j]==moves[i][j+3]){
+                winner=moves[i][j];
+            }
+        }
+    }
+
+    for(i=0;i<width-3;i++){
+        for(j=0;j<width-3;j++){
+            if((moves[i][j]=="X"|| moves[i][j]=="O") && moves[i][j]==moves[i+1][j+1] && moves[i][j]==moves[i+2][j+2] && moves[i][j]==moves[i+3][j+3]){
+                winner=moves[i][j];
+            }
+        }
+    }
+
+    for(i=width-4;i>=0;i--){
+        for(j=width-1;j>2;j--){
+            if((moves[i][j]=="X"|| moves[i][j]=="O") && moves[i][j]==moves[i+1][j-1] && moves[i][j]==moves[i+2][j-2] && moves[i][j]==moves[i+3][j-3]){
+                winner=moves[i][j];
+            }
+        }
+    }
+
+
+}
+
+function reset_board(){
+
+    for(let i=0;i<width*width;i++){
+        square=document.getElementById(i);
+        square.innerHTML="";
+        is_clicked[i]=0;
+
+    }
+    winner="n";
+    for(let i=0;i<width;i++){
+        for(let j=0;j<width;j++){
+            moves[i][j]="";
+        }
+    }
+    click_count=0;
+    result.innerHTML="";
+
+
+
 }
 function createBoard() {
 
@@ -52,14 +105,19 @@ function createBoard() {
       //normal click
       square.addEventListener('click', function(e) {
         
-        if(is_clicked[square.id]==0){
-            if(click_count%2==0){
+        if(is_clicked[square.id]==0 && winner=="n"){
+            if(click_count%2==0 ){
                 //square.style.background="red";
 
                 square.innerHTML="X";
                 is_clicked[square.id]=1;
                 console.log((Math.floor(square.id/10)));
                 moves[Math.floor(square.id/10)][(square.id)%10]="X";
+                check_game_result();
+                if(winner!="n"){
+                    result=document.querySelector(".result");
+                    result.innerHTML="the winner is "+winner;
+                }
 
             }
             else{
@@ -68,6 +126,13 @@ function createBoard() {
                 is_clicked[square.id]=1;
                 
                 moves[Math.floor(square.id/10)][(square.id)%10]="O";
+                check_game_result();
+
+                
+                if(winner!="n"){
+                    result=document.querySelector(".result");
+                    result.innerHTML="the winner is "+winner;
+                }
 
             }
             click_count++;
